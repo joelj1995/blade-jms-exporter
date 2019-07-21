@@ -48,7 +48,10 @@ def do_export(context, props, filepath):
         for face_idx, f in enumerate(bm.faces):
             mat_idx = bpy.data.materials[:].index(child.material_slots[f.material_index].material)
             for loop in f.loops:
-                uv = loop[uv_layer].uv
+                try:
+                    uv = loop[uv_layer].uv
+                except AttributeError:
+                    return False, 'No UVs found for the object. Unrwap your mesh and try again.'
                 v = loop.vert
                 verts.append(Vertex(0, Vec3(mat*v.co*props.export_scale_factor), Vec3(v.normal), uv[0], uv[1]))
             faces.append(Face(i, mat_idx, Vec3((face_idx*3+0, face_idx*3+1, face_idx*3+2))))
