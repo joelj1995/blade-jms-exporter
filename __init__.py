@@ -9,7 +9,7 @@ import bmesh
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import BoolProperty, IntProperty, EnumProperty
 
-from io_export_jms import Vec3, ExportItem, Header, Node, Material, Marker, Region, Vertex, Face, JMS, Quat4
+from .io_export_jms import Vec3, ExportItem, Header, Node, Material, Marker, Region, Vertex, Face, JMS, Quat4
 
 bl_info = {
     "name": "Blade Exporter (.jms)",
@@ -23,7 +23,10 @@ bl_info = {
 
 def do_export(context, props, filepath):
     file = open(filepath, "w")
-    frame = bpy.data.objects['frame']
+    try:
+        frame = bpy.data.objects['frame']
+    except KeyError:
+        return False, 'No frame object found in the scene'
 
     nodes = [Node("frame", Quat4(0, 0, 0, 1.), Vec3(frame.matrix_world.translation*props.export_scale_factor))]
     materials = [] 
@@ -79,9 +82,11 @@ class Export_jms(bpy.types.Operator, ExportHelper):
 
         exported = do_export(context, props, filepath)
 
-        if exported:
+        if exported[0]:
             print('finished export in %s seconds' %((time.time() - start_time)))
             print(filepath)
+        else:
+            self.report({'ERROR'}, exported[1])
 
         return {'FINISHED'}
 

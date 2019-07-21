@@ -15,12 +15,6 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from os import remove
-import time
-import math
-import struct
-
-
 
 class Vec3:
 
